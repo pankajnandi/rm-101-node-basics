@@ -1,5 +1,6 @@
 // install and import express
 const express = require("express");
+const fs = require("fs");
 // const express = () => {};
 let app = express();
 app.use(express.json());
@@ -27,8 +28,16 @@ app.get("/users", async (req, res) => {
   });
 app.post("/users",async(req,res)=>{
     try{
-        const user = data.push(req.body);
-        return res.status(200).send(user); 
+       let user = req.body;
+       data.push(user);
+       const jsonString = JSON.stringify(data)
+       fs.writeFile('./src/assets/user.json', jsonString, err => {
+        if (err) {
+            console.log('Error writing file', err)
+        } else {
+            return res.status(200).send(user); 
+        }
+    }) 
     }
     catch(err){
         return res.status(500).send({ message: err.message });
